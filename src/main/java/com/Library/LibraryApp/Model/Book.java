@@ -36,5 +36,7 @@ public class Book {
     @JoinColumn(name = "author_id")
     private Author author;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User currentUser;
 }
