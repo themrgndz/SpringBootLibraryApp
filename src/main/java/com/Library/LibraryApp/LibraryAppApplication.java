@@ -38,7 +38,7 @@ public class LibraryAppApplication {
             book1.setAuthor(author1);
 
             Book book2 = new Book();
-            book2.setTitle("Java'nın Gizemleri");
+            book2.setTitle("Python'ın Gizemleri");
             book2.setLanguage("Türkçe");
             book2.setPublishDate(LocalDate.of(2018, 10, 12));
             book2.setIsbn("978-3-16-148410-0");
