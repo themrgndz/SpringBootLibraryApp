@@ -1,23 +1,21 @@
+// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
-import BookDetailPage from "./pages/BookDetailPage.jsx";
 
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* Giriş Sayfası */}
-        <Route path="/login" element={<LoginPage />} />
-        
-        {/* Anasayfa - Şimdilik buraya bir placeholder koyalım */}
-        <Route path="/" element={<HomePage />} />
-        
-        <Route path="/book/:id" element={<BookDetailPage />} />
-
-        {/* 404 Sayfası (Opsiyonel) */}
-        <Route path="*" element={<div>Sayfa Bulunamadı Brom!</div>} />
-      </Routes>
+      <div className="d-flex flex-column min-vh-100 bg-light"> 
+        <Navbar />
+        <main className="container my-4 flex-grow-1">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </Router>
   );
 }

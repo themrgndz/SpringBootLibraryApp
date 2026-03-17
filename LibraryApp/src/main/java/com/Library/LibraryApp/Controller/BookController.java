@@ -15,19 +15,17 @@ import org.springframework.data.domain.PageRequest;
 public class BookController {
 
     private final BookService bookService;
-
     // 1. Tüm kitapları getirme ve Arama yapma (GET /api/books)
     @GetMapping
     public Page<Book> getBooks(@RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "20") int size,
-                               @RequestParam(required = false) String query,
-                               @RequestParam(required = false) String type) {
+                               @RequestParam(defaultValue = "12") int size, // React tarafıyla uyumlu olması için 12 yaptık
+                               @RequestParam(required = false) String query) { // 'type' parametresini sildik
 
-        // PageRequest oluşturuyoruz (Hangi sayfa, kaç tane?)
         Pageable pageable = PageRequest.of(page, size);
 
         if (query != null && !query.trim().isEmpty()) {
-            return bookService.searchBooks(query, type, pageable);
+            // BURASI DEĞİŞTİ: Sadece query ve pageable gönderiyoruz
+            return bookService.searchBooks(query, pageable);
         } else {
             return bookService.getAllBooks(pageable);
         }

@@ -20,16 +20,9 @@ public class BookService {
     public Book getBookById(Long id){
         return bookRepository.findById(id).orElse(null);
     }
-    public Page<Book> searchBooks(String query, String type, Pageable pageable) {
-        if ("title".equalsIgnoreCase(type)) {
-            return bookRepository.findByTitleContainingIgnoreCase(query, pageable);
-        } else if ("isbn".equalsIgnoreCase(type)) {
-            return bookRepository.findByIsbnContainingIgnoreCase(query, pageable);
-        } else if ("author".equalsIgnoreCase(type)) {
-            return bookRepository.findByAuthorNameContainingIgnoreCase(query, pageable);
-        } else {
-            return bookRepository.findByTitleContainingIgnoreCaseOrIsbnContainingIgnoreCase(query, query, pageable);
-        }
+    public Page<Book> searchBooks(String query, Pageable pageable) {
+        // query'yi hem başlıkta hem de ISBN'de ara (Zaten repository'de bu metodun vardı)
+        return bookRepository.findByTitleContainingIgnoreCaseOrIsbnContainingIgnoreCase(query, query, pageable);
     }
     @Transactional public Book checkoutBook(Long userId, Long bookId) {
 
