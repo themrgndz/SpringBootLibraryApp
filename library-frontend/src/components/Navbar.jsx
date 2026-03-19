@@ -2,33 +2,18 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm w-100">
+    <nav className="navbar navbar-expand-lg sticky-top shadow-lg" style={{ backgroundColor: "var(--bg-card)", borderBottom: "1px solid var(--border-color)" }}>
       <div className="container">
-        {/* Logo - Bizi her zaman anasayfaya götürür */}
-        <Link className="navbar-brand fw-bold fs-4" to="/">
+        <Link className="navbar-brand fw-bold fs-4" style={{ color: "var(--primary-color)" }} to="/">
           📚 LibraryApp
         </Link>
-
-        {/* Mobil cihazlar için menü butonu */}
-        <button 
-          className="navbar-toggler" 
-          type="button" 
-          data-bs-toggle="collapse" 
-          data-bs-target="#navbarNav"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        {/* Menü İçeriği */}
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
+            
             <li className="nav-item">
-              <Link className="nav-link active" to="/">
-                Anasayfa
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">
+              <Link className="nav-link btn btn-sm ms-lg-3 px-4 shadow-sm" 
+                    style={{ backgroundColor: "var(--primary-color)", color: "var(--bg-dark)", fontWeight: "600" }} 
+                    to="/login">
                 Giriş Yap
               </Link>
             </li>

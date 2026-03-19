@@ -1,100 +1,149 @@
-import { useEffect, useState } from "react";
-import api from "../services/api";
-import BookCard from "../components/BookCard";
+import React, { useState, useEffect } from 'react';
+import api from '../services/api';
+import BookCard from '../components/BookCard';
 
-export default function HomePage() {
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const pageSize = 12; // 6'lı grid için 12 (2 satır) idealdir
+const HomePage = () => {
+    const [books, setBooks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const pageSize = 12;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get("/books", {
-          params: {
-            query: searchQuery,
-            page: currentPage,
-            size: pageSize
-          }
-        });
-        setBooks(response.data.content);
-        setTotalPages(response.data.totalPages);
-      } catch (error) {
-        console.error("Kitaplar yüklenirken hata oluştu:", error);
-      } finally {
-        setLoading(false);
-      }
+    useEffect(() => {
+        fetchBooks();
+    }, [currentPage, searchQuery]);
+
+    const fetchBooks = async () => {
+        setLoading(true);
+        try {
+            const response = await api.get('/books', {
+                params: {
+                    title: searchQuery,
+                    page: currentPage,
+                    size: pageSize
+                }
+            });
+            setBooks(response.data.content || []);
+            setTotalPages(response.data.totalPages || 0);
+        } catch (error) {
+            console.error("Kitaplar çekilirken hata oluştu:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    fetchData();
-  }, [searchQuery, currentPage]);
+    const bgImageUrl = "https://images.unsplash.com/photo-1536965764833-5971e0abed7c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"; 
+    
+    const pageStyle = {
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.95)), url(${bgImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed', 
+        minHeight: '100vh',
+    };
 
-  return (
-    <div className="container py-4">
-      {/* 1. Bölüm: Büyük Arama Kutusu (Tasarımındaki gibi) */}
-      <div className="row justify-content-center mb-5">
-        <div className="col-md-8 text-center">
-          <h2 className="mb-4 fw-light">Hangi kitabı aramıştınız?</h2>
-          <div className="input-group input-group-lg shadow-sm">
-            <span className="input-group-text bg-white border-end-0">🔍</span>
-            <input 
-              type="text" 
-              className="form-control border-start-0" 
-              placeholder="Kitap adı, yazar veya ISBN yazın..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(0); // Arama yapıldığında 1. sayfaya dön
-              }}
-            />
-          </div>
-        </div>
-      </div>
+    return (
+        <div style={pageStyle}>
+            <div className="container py-5">
+                {/* --- HERO & SEARCH SECTION --- */}
+                <div className="row justify-content-center mb-5 py-4">
+                    <div className="col-md-8 text-center">
+                        <h1 className="display-4 fw-bold mb-3" style={{ color: "var(--primary-color)", textShadow: "0 4px 10px rgba(0,0,0,0.8)" }}>
+                            Keşfedilmeyi Bekleyen Hikayeler
+                        </h1>
+                        <p className="fs-5 mb-4" style={{ color: "var(--text-main)", opacity: 0.8 }}>
+                            Binlerce kitap arasından senin için doğru olanı bul.
+                        </p>
+                        
+                        <div className="input-group input-group-lg shadow-lg" style={{ borderRadius: "15px", overflow: "hidden", border: "1px solid var(--border-color)" }}>
+                            <span className="input-group-text border-0" style={{ backgroundColor: "var(--bg-card)", color: "var(--primary-color)" }}>
+                                🔍
+                            </span>
+                            <input 
+                                type="text" 
+                                className="form-control border-0 py-3 shadow-none" 
+                                placeholder="Kitap ismi, yazar veya ISBN ara..."
+                                style={{ backgroundColor: "var(--bg-card)", color: "var(--text-main)" }}
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setCurrentPage(0);
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
 
-      {/* 2. Bölüm: Kitap Grid Yapısı */}
-      {loading ? (
-        <div className="text-center my-5">
-          <div className="spinner-border text-dark" role="status"></div>
-          <p className="mt-2 text-muted">Kitaplar raflara diziliyor...</p>
-        </div>
-      ) : (
-        <>
-          <div className="row">
-            {books.length > 0 ? (
-              books.map(book => <BookCard key={book.id} book={book} />)
-            ) : (
-              <div className="text-center my-5">
-                <h4>Aradığınız kriterde kitap bulunamadı. 😔</h4>
-              </div>
-            )}
-          </div>
+                {/* --- BOOKS GRID --- */}
+                {loading ? (
+                    <div className="text-center py-5">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Yükleniyor...</span>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <div className="row g-4">
+                            {books.length > 0 ? (
+                                books.map((book) => (
+                                    <BookCard key={book.id} book={book} />
+                                ))
+                            ) : (
+                                <div className="col-12 text-center py-5">
+                                    <p className="fs-4 text-muted">Aradığınız kriterlere uygun kitap bulunamadı.</p>
+                                </div>
+                            )}
+                        </div>
 
-          {/* 3. Bölüm: Sayfalama (Pagination) */}
-          {totalPages > 1 && (
-            <div className="d-flex justify-content-center mt-5">
-              <nav>
-                <ul className="pagination">
-                  <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Geri</button>
-                  </li>
-                  <li className="page-item disabled">
-                    <span className="page-link text-dark fw-bold">
-                      {currentPage + 1} / {totalPages}
-                    </span>
-                  </li>
-                  <li className={`page-item ${currentPage >= totalPages - 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>İleri</button>
-                  </li>
-                </ul>
-              </nav>
+                        {/* --- PAGINATION --- */}
+                        {totalPages > 1 && (
+                            <nav className="mt-5">
+                                <ul className="pagination justify-content-center gap-2">
+                                    <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
+                                        <button 
+                                            className="page-link rounded-circle border-0 shadow-sm px-3 py-2" 
+                                            style={{ backgroundColor: "var(--bg-card)", color: "var(--text-main)" }}
+                                            onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                                        >
+                                            &laquo;
+                                        </button>
+                                    </li>
+                                    
+                                    {[...Array(totalPages)].map((_, index) => (
+                                        <li key={index} className="page-item">
+                                            <button 
+                                                className={`page-link rounded-circle border-0 shadow-sm px-3 py-2`}
+                                                style={{ 
+                                                    backgroundColor: currentPage === index ? "var(--primary-color)" : "var(--bg-card)",
+                                                    color: currentPage === index ? "var(--bg-dark)" : "var(--text-main)",
+                                                    fontWeight: "600",
+                                                    transition: "0.3s"
+                                                }}
+                                                onClick={() => setCurrentPage(index)}
+                                            >
+                                                {index + 1}
+                                            </button>
+                                        </li>
+                                    ))}
+
+                                    <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
+                                        <button 
+                                            className="page-link rounded-circle border-0 shadow-sm px-3 py-2" 
+                                            style={{ backgroundColor: "var(--bg-card)", color: "var(--text-main)" }}
+                                            onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
+                                        >
+                                            &raquo;
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
+                        )}
+                    </>
+                )}
             </div>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
+        </div>
+    );
+};
+
+export default HomePage;
