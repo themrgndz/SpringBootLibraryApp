@@ -24,7 +24,6 @@ public class BookController {
         Pageable pageable = PageRequest.of(page, size);
 
         if (query != null && !query.trim().isEmpty()) {
-            // BURASI DEĞİŞTİ: Sadece query ve pageable gönderiyoruz
             return bookService.searchBooks(query, pageable);
         } else {
             return bookService.getAllBooks(pageable);

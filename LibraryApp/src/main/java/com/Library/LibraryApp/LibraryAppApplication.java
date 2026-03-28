@@ -42,8 +42,6 @@ public class LibraryAppApplication {
             user1.setLastName("Gündüz");
             userRepository.save(user1);
 
-            // 3. Kitapları Raflara Diziyoruz
-
             saveBook("Suç ve Ceza", "Türkçe", "9789750719324", 15,
                     "Raskolnikov'un vicdan azabı ve toplumsal sorgulamaları üzerine bir başyapıt.", dostoyevski, "/book-covers/suc-ve-ceza.jpeg", bookRepository);
 
@@ -72,6 +70,7 @@ public class LibraryAppApplication {
                     "Türk edebiyatının en güçlü Anadolu tasvirlerinden biri.", sabahattinAli, "/book-covers/kuyucaklı-yusuf.jpeg", bookRepository);
 
             System.out.println("Gerçek kitaplar ve yazarlar başarıyla sisteme yüklendi!");
+
         };
     }
 
