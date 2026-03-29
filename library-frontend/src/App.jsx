@@ -2,7 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
+import BookDetailPage from './pages/BookDetailPage';
 import './index.css';
+
 
 function App() {
   return (
@@ -12,6 +14,7 @@ function App() {
         <main className="flex-grow-1">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/book/:id" element={<BookDetailPage />} />
             {/* Diğer rotalar buraya gelecek */}
           </Routes>
         </main>
