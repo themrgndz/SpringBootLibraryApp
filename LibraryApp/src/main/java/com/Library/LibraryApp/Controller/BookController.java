@@ -37,7 +37,7 @@ public class BookController {
     }
 
     @PutMapping("/checkout")
-    public Book checkoutBook(@RequestParam Long userId, @RequestParam Long bookId) {
-        return bookService.checkoutBook(String.valueOf(userId), bookId);
+    public Book checkoutBook(@RequestParam String userEmail, @RequestParam Long bookId) throws Exception {
+        return bookService.checkoutBook(userEmail, bookId);
     }
 }

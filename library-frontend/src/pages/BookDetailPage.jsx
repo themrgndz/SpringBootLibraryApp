@@ -8,38 +8,38 @@ const BookDetailPage = () => {
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
     
-    // localStorage'dan kullanıcı bilgisini alarak giriş durumunu kontrol ediyoruz
     const userJson = localStorage.getItem('user');
     const user = userJson ? JSON.parse(userJson) : null;
     const isLoggedIn = !!user; 
 
     const handleCheckout = async () => {
-        // Giriş yapılmamışsa uyarı ver ve login sayfasına yönlendir
-        if (!isLoggedIn) {
-            alert("Kitap ödünç almak için lütfen giriş yapın.");
-            navigate('/login');
-            return;
-        }
+    if (!isLoggedIn) {
+        alert("Kitap ödünç almak için lütfen giriş yapın.");
+        navigate('/login');
+        return;
+    }
 
-        try {
-            // Backend'deki PUT /api/books/checkout endpoint'ine istek atıyoruz
-            // userEmail bilgisini giriş yapan kullanıcının verisinden çekiyoruz
-            const response = await api.put('/books/checkout', null, {
-                params: {
-                    userEmail: user.email, 
-                    bookId: id
-                }
-            });
-            
-            // Stok miktarının güncellenmesi için dönen kitap verisini set ediyoruz
-            setBook(response.data);
-            alert("Kitap başarıyla ödünç alındı!");
-        } catch (error) {
-            // Hata durumunda backend'den gelen mesajı gösteriyoruz
-            const errorMessage = error.response?.data?.message || "Ödünç alma işlemi sırasında bir hata oluştu.";
-            alert(errorMessage);
-        }
-    };
+    try {
+        // user.email'in dolu olduğundan emin olun (Konsoldan kontrol edin)
+        console.log("İstek gönderiliyor:", user.email, id);
+
+        const response = await api.put('/books/checkout', null, {
+            params: {
+                userEmail: user.email, 
+                bookId: id
+            }
+        });
+        
+        setBook(response.data);
+        alert("Kitap başarıyla ödünç alındı!");
+    } catch (error) {
+        // Hatanın detayını konsola yazdırıyoruz ki sorunu tam görelim
+        console.error("Ödünç alma hatası detayı:", error.response);
+        
+        const errorMessage = error.response?.data?.message || "İşlem sırasında bir hata oluştu.";
+        alert(errorMessage);
+    }
+};
 
     const defaultImage = "https://images.isbndb.com/covers/91/26/9789750719126.jpg";
 
