@@ -83,8 +83,6 @@ const HomePage = () => {
                         </form>
                     </div>
                 </div>
-
-                {/* --- Kitap Listesi ve Pagination bölümleri aynı kalıyor --- */}
                 {loading ? (
                     <div className="text-center py-5">
                         <div className="spinner-border text-primary" role="status">
@@ -104,7 +102,6 @@ const HomePage = () => {
                                 </div>
                             )}
                         </div>
-                        {/* Pagination buraya gelecek... */}
                     </>
                 )}
             </div>

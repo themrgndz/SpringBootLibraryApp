@@ -4,7 +4,7 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import BookDetailPage from './pages/BookDetailPage';
 import './index.css';
-
+import LoginPage from './pages/LoginPage'; 
 
 function App() {
   return (
@@ -15,14 +15,9 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/book/:id" element={<BookDetailPage />} />
-            {/* Diğer rotalar buraya gelecek */}
+            <Route path="/login" element={<LoginPage />} /> 
           </Routes>
         </main>
-        <footer className="py-3 text-center" style={{ backgroundColor: "var(--bg-card)", borderTop: "1px solid var(--border-color)" }}>
-          <p className="mb-0" style={{ color: "var(--text-muted)" }}>
-            © 2024 LibraryApp - Tüm Hakları Saklıdır.
-          </p>
-        </footer>
       </div>
     </Router>
   );

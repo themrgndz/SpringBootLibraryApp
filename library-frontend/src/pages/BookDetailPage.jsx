@@ -7,32 +7,46 @@ const BookDetailPage = () => {
     const navigate = useNavigate();
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isLoggedIn, setIsLoggedIn] = useState(false); 
+    
+    // localStorage'dan kullanıcı bilgisini alarak giriş durumunu kontrol ediyoruz
+    const userJson = localStorage.getItem('user');
+    const user = userJson ? JSON.parse(userJson) : null;
+    const isLoggedIn = !!user; 
+
     const handleCheckout = async () => {
+        // Giriş yapılmamışsa uyarı ver ve login sayfasına yönlendir
         if (!isLoggedIn) {
             alert("Kitap ödünç almak için lütfen giriş yapın.");
+            navigate('/login');
             return;
         }
 
         try {
+            // Backend'deki PUT /api/books/checkout endpoint'ine istek atıyoruz
+            // userEmail bilgisini giriş yapan kullanıcının verisinden çekiyoruz
             const response = await api.put('/books/checkout', null, {
                 params: {
-                    userEmail: "themrgndz@outlook.com", // Test için manuel verdik
+                    userEmail: user.email, 
                     bookId: id
                 }
             });
+            
+            // Stok miktarının güncellenmesi için dönen kitap verisini set ediyoruz
             setBook(response.data);
-            alert("Kitap başarıyla alındı!");
+            alert("Kitap başarıyla ödünç alındı!");
         } catch (error) {
-            // Backend'den gelen "Bu kitabı zaten almışsınız" mesajını gösterir
-            alert(error.response?.data?.message || "Bir hata oluştu.");
+            // Hata durumunda backend'den gelen mesajı gösteriyoruz
+            const errorMessage = error.response?.data?.message || "Ödünç alma işlemi sırasında bir hata oluştu.";
+            alert(errorMessage);
         }
     };
+
     const defaultImage = "https://images.isbndb.com/covers/91/26/9789750719126.jpg";
 
     useEffect(() => {
         const fetchBookDetails = async () => {
             try {
+                // Kitap detaylarını backend'den çekiyoruz
                 const response = await api.get(`/books/${id}`);
                 setBook(response.data);
             } catch (error) {
@@ -44,8 +58,15 @@ const BookDetailPage = () => {
         fetchBookDetails();
     }, [id]);
 
-    if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
-    if (!book) return <div className="text-center py-5 text-white">Kitap bulunamadı.</div>;
+    if (loading) return (
+        <div className="d-flex justify-content-center align-items-center vh-100 bg-dark">
+            <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Yükleniyor...</span>
+            </div>
+        </div>
+    );
+    
+    if (!book) return <div className="text-center py-5 text-white bg-dark vh-100">Kitap bulunamadı.</div>;
 
     const bgImageUrl = "https://images.unsplash.com/photo-1536965764833-5971e0abed7c?q=80&w=2070";
 
@@ -60,7 +81,6 @@ const BookDetailPage = () => {
             padding: '60px 0'
         }}>
             <div className="container">
-                {/* --- Üst Başlık: Daha parlak ve belirgin --- */}
                 <h1 className="display-3 fw-bold text-center mb-5" 
                     style={{ 
                         color: "#ffffff", 
@@ -70,7 +90,6 @@ const BookDetailPage = () => {
                     {book.title}
                 </h1>
 
-                {/* --- Merkezi Detay Kartı --- */}
                 <div className="card border-0 shadow-lg mx-auto" style={{ 
                     maxWidth: '1100px', 
                     backgroundColor: 'rgba(10, 10, 10, 0.8)',
@@ -80,7 +99,6 @@ const BookDetailPage = () => {
                     backdropFilter: 'blur(10px)'
                 }}>
                     <div className="row g-0">
-                        {/* Sol: Görsel Alanı */}
                         <div className="col-md-5 d-flex align-items-center justify-content-center p-4" 
                              style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
                             <img 
@@ -97,15 +115,12 @@ const BookDetailPage = () => {
                             />
                         </div>
 
-                        {/* Sağ: Bilgiler Alanı */}
                         <div className="col-md-7 p-5 d-flex flex-column justify-content-center">
-                            {/* Yazar Kısmı */}
                             <div className="mb-4">
                                 <label className="text-uppercase fw-bold mb-1" style={{ color: "var(--primary-color)", fontSize: "0.85rem", letterSpacing: "1px" }}>YAZAR</label>
                                 <h2 className="fw-bold" style={{ color: "#ffffff" }}>{book.author?.name || "Bilinmeyen Yazar"}</h2>
                             </div>
 
-                            {/* ISBN ve Dil Yan Yana */}
                             <div className="row mb-4">
                                 <div className="col-6">
                                     <label className="text-uppercase fw-bold mb-1" style={{ color: "var(--primary-color)", fontSize: "0.8rem", letterSpacing: "1px" }}>ISBN</label>
@@ -117,7 +132,6 @@ const BookDetailPage = () => {
                                 </div>
                             </div>
 
-                            {/* Açıklama Alanı */}
                             <div className="mb-4">
                                 <label className="text-uppercase fw-bold mb-1" style={{ color: "var(--primary-color)", fontSize: "0.8rem", letterSpacing: "1px" }}>KİTAP ÖZETİ</label>
                                 <p style={{ color: "#b0b0b0", lineHeight: '1.8', fontSize: "1.05rem" }}>
@@ -125,7 +139,6 @@ const BookDetailPage = () => {
                                 </p>
                             </div>
 
-                            {/* Alt Kısım: Stok ve Butonlar */}
                             <div className="d-flex align-items-center justify-content-between mt-4 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                                 <div>
                                     <span className={`badge px-3 py-2 ${book.stock > 0 ? 'bg-success text-white' : 'bg-danger text-white'}`} 
@@ -134,19 +147,14 @@ const BookDetailPage = () => {
                                     </span>
                                 </div>
                                 
-                                {/* Butonlar Grubu*/}
-                            <div className="d-flex gap-3 align-items-center">
-                                <button 
-                                    onClick={() => navigate(-1)} 
-                                    className="btn btn-link text-decoration-none fw-bold px-0 me-3 cancel-btn"
-                                    style={{ 
-                                        color: "rgba(255, 255, 255, 0.6)", // Varsayılan açık gri
-                                        fontSize: "0.95rem",
-                                        transition: "0.3s"
-                                    }}
-                                >
-                                    ← Vazgeç
-                                </button>
+                                <div className="d-flex gap-3 align-items-center">
+                                    <button 
+                                        onClick={() => navigate(-1)} 
+                                        className="btn btn-link text-decoration-none fw-bold px-0 me-3"
+                                        style={{ color: "rgba(255, 255, 255, 0.6)", fontSize: "0.95rem" }}
+                                    >
+                                        ← Vazgeç
+                                    </button>
                                     <button 
                                         className="btn px-5 py-2 fw-bold" 
                                         disabled={book.stock <= 0}
@@ -159,7 +167,7 @@ const BookDetailPage = () => {
                                             transition: "0.3s"
                                         }}
                                     >
-                                        Ödünç Al
+                                        {book.stock > 0 ? 'Ödünç Al' : 'Stok Yok'}
                                     </button>
                                 </div>
                             </div>

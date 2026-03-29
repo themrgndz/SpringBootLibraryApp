@@ -74,7 +74,6 @@ public class LibraryAppApplication {
         };
     }
 
-    // Kod tekrarını önlemek için yardımcı metod
     private void saveBook(String title, String lang, String isbn, int stock, String desc, Author author, String imgUrl, IBookRepository repo) {
         Book book = new Book();
         book.setTitle(title);
@@ -84,7 +83,7 @@ public class LibraryAppApplication {
         book.setDescription(desc);
         book.setPublishDate(LocalDate.now());
         book.setAuthor(author);
-        book.setImageUrl(imgUrl); // URL'leri frontend tarafında sen ekleyeceğin için şimdilik boş gönderiyoruz
+        book.setImageUrl(imgUrl);
         repo.save(book);
     }
 }

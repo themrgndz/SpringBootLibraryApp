@@ -5,7 +5,6 @@ const BookCard = ({ book }) => {
     const navigate = useNavigate();
     const defaultImage = "https://images.isbndb.com/covers/91/26/9789750719126.jpg";
 
-    // Karta tıklandığında detay sayfasına yönlendirir
     const handleCardClick = () => {
         navigate(`/book/${book.id}`);
     };
@@ -19,7 +18,7 @@ const BookCard = ({ book }) => {
                     backgroundColor: "var(--bg-card)", 
                     borderRadius: "18px", 
                     overflow: "hidden",
-                    cursor: "pointer" // Tıklanabilir hissi verir
+                    cursor: "pointer"
                 }}
             >
                 {/* --- Nizamî Görsel Kutusu --- */}
